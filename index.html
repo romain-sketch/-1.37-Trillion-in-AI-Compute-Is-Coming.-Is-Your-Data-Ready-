@@ -54,8 +54,8 @@ nav{
   border-bottom:1px solid var(--border);
 }
 .nav-logo{
-  font-family:'Playfair Display',serif;
-  font-size:18px;font-weight:800;
+  font-family:'DM Sans',sans-serif;
+  font-size:18px;font-weight:700;
   color:var(--white);
   text-decoration:none;
   letter-spacing:-0.02em;
@@ -502,7 +502,7 @@ footer{
   text-align:center;
 }
 .footer-logo{
-  font-family:'Playfair Display',serif;font-size:16px;font-weight:800;
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;
   color:var(--white);letter-spacing:-0.02em;margin-bottom:0.5rem;
 }
 .footer-logo span{color:var(--razz);}
@@ -657,9 +657,12 @@ footer{
         <div class="gate-h">Your score is ready.</div>
         <div class="gate-sub">Enter your details to unlock your AI Data Readiness profile and personalised recommendations.</div>
         <div class="gate-fields">
-          <input type="text" id="g-name" placeholder="First name" autocomplete="given-name"/>
-          <input type="email" id="g-email" placeholder="Work email" autocomplete="email"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <input type="text" id="g-firstname" placeholder="First name" autocomplete="given-name"/>
+            <input type="text" id="g-lastname" placeholder="Last name" autocomplete="family-name"/>
+          </div>
           <input type="text" id="g-company" placeholder="Company" autocomplete="organization"/>
+          <input type="email" id="g-email" placeholder="Work email" autocomplete="email"/>
         </div>
         <button class="btn-next" onclick="showResult()" style="max-width:360px;margin:0 auto;">
           Reveal my score
@@ -808,6 +811,7 @@ function renderQ(){
       d.classList.add('sel');
       selScore=o.s;
       document.getElementById('btn-next').disabled=false;
+      setTimeout(nextQ, 320);
     };
     optsEl.appendChild(d);
   });
@@ -830,7 +834,8 @@ function submitToHubSpot(name,email,company,score,profile){
   const formGuid='YOUR_FORM_GUID'; // replace with actual HubSpot form GUID
   const data={
     fields:[
-      {name:'firstname',value:name},
+      {name:'firstname',value:firstname},
+      {name:'lastname',value:lastname},
       {name:'email',value:email},
       {name:'company',value:company},
       {name:'ai_readiness_score',value:String(score)},
@@ -846,7 +851,9 @@ function submitToHubSpot(name,email,company,score,profile){
 }
 
 function showResult(){
-  const name=document.getElementById('g-name').value.trim()||'there';
+  const firstname=document.getElementById('g-firstname').value.trim()||'there';
+  const lastname=document.getElementById('g-lastname').value.trim();
+  const name=firstname;
   const email=document.getElementById('g-email').value.trim();
   const company=document.getElementById('g-company').value.trim();
 
