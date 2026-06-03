@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Data Readiness Scorecard — Sifflet</title>
+<meta name="description" content="$1.37 trillion in AI compute is coming. Find out if your data stack is ready for it. Take the 3-minute assessment."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --razz:#FF015D;
+  --ocean:#0040B3;
+  --ocean-dark:#002D6B;
+  --dark:#121922;
+  --dark2:#1a2433;
+  --mid:#2a3a50;
+  --white:#ffffff;
+  --off:#f5f6f8;
+  --muted:#8a96a8;
+  --text:#1a2433;
+  --border:rgba(255,255,255,0.08);
+  --border-light:rgba(26,36,51,0.1);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.25rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(18,25,34,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:800;
+  color:var(--white);
+  text-decoration:none;
+  letter-spacing:-0.02em;
+}
+.nav-logo span{color:var(--razz);}
+.nav-cta{
+  font-size:13px;font-weight:500;
+  color:rgba(255,255,255,0.6);
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,0.15);
+  padding:7px 16px;border-radius:6px;
+  transition:all 0.2s;
+}
+.nav-cta:hover{color:var(--white);border-color:rgba(255,255,255,0.35);}
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:7rem 2rem 4rem;
+  overflow:hidden;
+}
+.hero-bg-orb{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.orb1{
+  width:600px;height:600px;
+  top:-200px;right:-200px;
+  background:radial-gradient(circle,rgba(0,64,179,0.18) 0%,transparent 65%);
+}
+.orb2{
+  width:400px;height:400px;
+  bottom:-100px;left:-100px;
+  background:radial-gradient(circle,rgba(255,1,93,0.1) 0%,transparent 65%);
+}
+.hero-inner{
+  position:relative;z-index:1;
+  max-width:760px;
+  text-align:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Playfair Display',serif;
+  font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--razz);
+  border:1px solid rgba(255,1,93,0.25);
+  padding:6px 14px;border-radius:100px;
+  margin-bottom:2rem;
+  animation:fadeUp 0.6s ease both;
+}
+.hero-eyebrow::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--razz);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,6vw,68px);
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:-0.03em;
+  color:var(--white);
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.6s 0.1s ease both;
+}
+.hero-h1 .razz{color:var(--razz);}
+.hero-h1 .dim{color:rgba(255,255,255,0.35);}
+.hero-sub{
+  font-size:18px;font-weight:300;line-height:1.65;
+  color:rgba(255,255,255,0.55);
+  max-width:540px;margin:0 auto 2.5rem;
+  animation:fadeUp 0.6s 0.2s ease both;
+}
+.hero-sub strong{color:rgba(255,255,255,0.85);font-weight:500;}
+.hero-cta-row{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  flex-wrap:wrap;
+  animation:fadeUp 0.6s 0.3s ease both;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--razz);color:var(--white);
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:0.01em;
+  padding:15px 32px;border-radius:8px;
+  text-decoration:none;border:none;cursor:pointer;
+  transition:transform 0.15s,opacity 0.15s;
+}
+.btn-primary:hover{transform:translateY(-1px);opacity:0.92;}
+.btn-primary svg{width:16px;height:16px;}
+.hero-meta{
+  font-size:13px;color:rgba(255,255,255,0.3);
+  display:flex;align-items:center;gap:6px;
+}
+.hero-meta::before{content:'⏱';}
+
+/* STAT BAR */
+.stat-bar{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:1.5rem 2rem;
+  display:flex;align-items:center;justify-content:center;gap:0;
+  flex-wrap:wrap;
+  background:rgba(255,255,255,0.02);
+}
+.stat-item{
+  display:flex;flex-direction:column;align-items:center;
+  padding:0.5rem 2.5rem;
+  border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none;}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:800;
+  color:var(--white);
+  letter-spacing:-0.02em;
+}
+.stat-num span{color:var(--razz);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;text-align:center;}
+
+/* ── SALMA QUOTE ── */
+.quote-section{
+  padding:5rem 2rem;
+  position:relative;z-index:1;
+  display:flex;justify-content:center;
+}
+.quote-card{
+  max-width:720px;width:100%;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:3rem;
+  background:rgba(255,255,255,0.03);
+  position:relative;
+}
+.quote-mark{
+  font-family:'Playfair Display',serif;
+  font-size:80px;font-weight:800;
+  color:var(--razz);
+  line-height:0.6;
+  position:absolute;top:2rem;left:2.5rem;
+  opacity:0.4;
+}
+.quote-text{
+  font-size:20px;font-weight:300;line-height:1.7;
+  color:rgba(255,255,255,0.8);
+  font-style:italic;
+  padding-top:1.5rem;
+  margin-bottom:1.5rem;
+}
+.quote-text strong{
+  color:var(--white);font-style:normal;font-weight:500;
+}
+.quote-author{
+  display:flex;align-items:center;gap:12px;
+}
+.quote-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--ocean),var(--razz));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  color:var(--white);flex-shrink:0;
+}
+.quote-name{font-size:14px;font-weight:500;color:var(--white);}
+.quote-role{font-size:12px;color:var(--muted);}
+.gartner-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:4px 10px;border-radius:4px;
+  margin-bottom:1rem;
+}
+
+/* ── ASSESSMENT ── */
+#assessment{
+  position:relative;z-index:1;
+  padding:2rem 2rem 6rem;
+  display:flex;justify-content:center;
+}
+.assessment-wrap{
+  max-width:680px;width:100%;
+}
+.section-label{
+  font-family:'Playfair Display',serif;
+  font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--razz);
+  margin-bottom:1rem;
+  text-align:center;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--white);
+  text-align:center;
+  margin-bottom:3rem;
+  line-height:1.25;
+  letter-spacing:-0.02em;
+}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:2.5rem;}
+.prog-meta{
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:8px;
+}
+.prog-dim{
+  font-family:'Playfair Display',serif;
+  font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+  color:var(--razz);
+}
+.prog-count{font-size:12px;color:var(--muted);}
+.prog-track{
+  height:2px;
+  background:rgba(255,255,255,0.08);
+  border-radius:2px;overflow:hidden;
+}
+.prog-fill{
+  height:100%;background:var(--razz);
+  border-radius:2px;transition:width 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+/* QUESTION CARD */
+.q-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:2.5rem;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.35s ease both;
+}
+.q-text{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;line-height:1.4;
+  color:var(--white);
+  margin-bottom:0.75rem;
+  letter-spacing:-0.01em;
+}
+.q-readmore{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;color:rgba(0,100,220,0.75);
+  text-decoration:none;
+  margin-bottom:1.75rem;
+  transition:color 0.15s;
+}
+.q-readmore:hover{color:#4d9fff;}
+.q-readmore svg{width:12px;height:12px;flex-shrink:0;}
+
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  cursor:pointer;
+  background:rgba(255,255,255,0.03);
+  transition:border-color 0.15s,background 0.15s,transform 0.1s;
+  user-select:none;
+}
+.opt:hover{
+  border-color:rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.06);
+  transform:translateX(2px);
+}
+.opt.sel{
+  border-color:var(--razz);
+  background:rgba(255,1,93,0.08);
+}
+.opt-radio{
+  width:18px;height:18px;min-width:18px;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.25);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.15s;
+  flex-shrink:0;
+}
+.opt.sel .opt-radio{border-color:var(--razz);}
+.opt-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--razz);
+  opacity:0;transition:opacity 0.15s;
+}
+.opt.sel .opt-dot{opacity:1;}
+.opt-text{
+  font-size:15px;line-height:1.45;
+  color:rgba(255,255,255,0.75);
+}
+.opt.sel .opt-text{color:var(--white);}
+
+.btn-next{
+  width:100%;padding:15px;
+  background:var(--razz);color:var(--white);
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:0.01em;
+  border:none;border-radius:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity 0.15s,transform 0.15s;
+}
+.btn-next:disabled{opacity:0.25;cursor:not-allowed;}
+.btn-next:not(:disabled):hover{opacity:0.9;transform:translateY(-1px);}
+.btn-next svg{width:16px;height:16px;}
+
+/* GATE */
+.gate-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:3rem 2.5rem;
+  text-align:center;
+  animation:fadeUp 0.35s ease both;
+}
+.gate-score-preview{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(255,1,93,0.15);
+  border:2px solid rgba(255,1,93,0.3);
+  margin:0 auto 1.5rem;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.gate-score-preview::after{
+  content:'?';
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:800;
+  color:var(--razz);
+}
+.gate-h{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--white);
+  margin-bottom:0.5rem;letter-spacing:-0.01em;
+}
+.gate-sub{
+  font-size:15px;color:var(--muted);
+  margin-bottom:2rem;line-height:1.6;
+}
+.gate-fields{
+  display:flex;flex-direction:column;gap:10px;
+  max-width:360px;margin:0 auto 1.5rem;
+}
+.gate-fields input{
+  padding:13px 16px;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:8px;
+  background:rgba(255,255,255,0.05);
+  color:var(--white);font-size:15px;
+  font-family:'DM Sans',sans-serif;
+  transition:border-color 0.15s;
+  outline:none;
+}
+.gate-fields input::placeholder{color:rgba(255,255,255,0.25);}
+.gate-fields input:focus{border-color:var(--razz);}
+.gate-legal{font-size:11px;color:rgba(255,255,255,0.2);margin-top:0.75rem;}
+
+/* RESULT */
+.result-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  animation:fadeUp 0.4s ease both;
+  margin-bottom:1.5rem;
+}
+.result-top{
+  padding:2.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:2rem;
+}
+.score-ring{
+  width:88px;height:88px;min-width:88px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:800;
+  color:var(--white);flex-shrink:0;
+}
+.result-profile-name{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--white);
+  margin-bottom:0.4rem;letter-spacing:-0.01em;
+}
+.result-desc{
+  font-size:14px;color:rgba(255,255,255,0.55);
+  line-height:1.65;
+}
+
+.reco-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+}
+.reco-cell{
+  padding:1.5rem;
+  background:rgba(18,25,34,0.9);
+}
+.reco-icon{
+  font-size:20px;margin-bottom:8px;opacity:0.7;
+}
+.reco-h{
+  font-family:'Playfair Display',serif;
+  font-size:13px;font-weight:700;color:var(--white);
+  margin-bottom:4px;
+}
+.reco-p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:8px;}
+.reco-a{
+  font-size:12px;color:rgba(0,100,220,0.75);
+  text-decoration:none;display:inline-flex;align-items:center;gap:4px;
+}
+.reco-a:hover{color:#4d9fff;}
+
+.cta-final{
+  background:linear-gradient(135deg,var(--ocean-dark),var(--ocean));
+  border:1px solid rgba(0,64,179,0.4);
+  border-radius:16px;
+  padding:2.5rem;text-align:center;
+  margin-bottom:1.5rem;
+}
+.cta-final-h{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--white);
+  margin-bottom:0.4rem;letter-spacing:-0.01em;
+}
+.cta-final-sub{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:1.5rem;}
+.btn-book{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--white);color:var(--dark);
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:700;letter-spacing:0.01em;
+  padding:13px 28px;border-radius:8px;
+  text-decoration:none;transition:opacity 0.15s;
+}
+.btn-book:hover{opacity:0.9;}
+
+.restart-btn{
+  display:block;text-align:center;
+  font-size:13px;color:rgba(255,255,255,0.25);
+  text-decoration:none;cursor:pointer;
+  background:none;border:none;width:100%;
+  padding:0.5rem;transition:color 0.15s;
+}
+.restart-btn:hover{color:rgba(255,255,255,0.5);}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:2rem;
+  text-align:center;
+}
+.footer-logo{
+  font-family:'Playfair Display',serif;font-size:16px;font-weight:800;
+  color:var(--white);letter-spacing:-0.02em;margin-bottom:0.5rem;
+}
+.footer-logo span{color:var(--razz);}
+.footer-sub{font-size:12px;color:rgba(255,255,255,0.2);}
+
+/* UTILS */
+.hidden{display:none!important;}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hero-h1{font-size:36px;}
+  .stat-item{padding:0.5rem 1.25rem;}
+  .stat-item:nth-child(3){border-right:none;}
+  .q-card{padding:1.5rem;}
+  .q-text{font-size:17px;}
+  .reco-grid{grid-template-columns:1fr;}
+  .result-top{flex-direction:column;text-align:center;}
+  .nav-cta{display:none;}
+  .quote-card{padding:2rem;}
+  .quote-text{font-size:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://www.siffletdata.com" class="nav-logo">Sifflet<span>.</span></a>
+  <a href="https://www.siffletdata.com" class="nav-cta">Back to siffletdata.com</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-orb orb1"></div>
+  <div class="hero-bg-orb orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">3-minute assessment</div>
+    <h1 class="hero-h1">
+      <span class="dim">$1.37 trillion in AI&nbsp;compute.</span><br>
+      Is your data <span class="razz">ready for it?</span>
+    </h1>
+    <p class="hero-sub">
+      Most teams are scaling AI on top of data they can't fully trust.
+      <strong>Answer 10 questions</strong> and find out where you stand — before it costs you.
+    </p>
+    <div class="hero-cta-row">
+      <a href="#assessment" class="btn-primary">
+        Take the assessment
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <div class="hero-meta">3 minutes · instant results</div>
+    </div>
+  </div>
+</section>
+
+<!-- STAT BAR -->
+<div class="stat-bar">
+  <div class="stat-item">
+    <div class="stat-num">$1.37<span>T</span></div>
+    <div class="stat-label">AI infra spend in 2026<br>(Gartner)</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">80<span>%</span></div>
+    <div class="stat-label">of AI projects fail due<br>to poor data quality</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">28<span>×</span></div>
+    <div class="stat-label">monitors watching<br>your pipeline</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Days<span>→</span>min</div>
+    <div class="stat-label">avg. resolution time<br>with Sifflet</div>
+  </div>
+</div>
+
+<!-- SALMA QUOTE -->
+<section class="quote-section">
+  <div class="quote-card">
+    <div class="quote-mark">"</div>
+    <div class="gartner-badge">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+      Context from Signals25
+    </div>
+    <p class="quote-text">
+      GPUs don't know which pipeline matters. They don't know which dataset is stale, which metric definition is wrong, or what broke downstream last Tuesday. They just run fast, at scale, on whatever you give them. So if the data is bad,
+      <strong>you get bad answers faster.</strong>
+      At a $1.37 trillion price tag.
+      The bottleneck in 2026 isn't compute. <strong>It's context.</strong>
+    </p>
+    <div class="quote-author">
+      <div class="quote-avatar">SB</div>
+      <div>
+        <div class="quote-name">Salma Bakouk</div>
+        <div class="quote-role">CEO, Sifflet</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section id="assessment">
+  <div class="assessment-wrap">
+
+    <!-- INTRO STATE -->
+    <div id="state-intro">
+      <div class="section-label">AI Data Readiness Scorecard</div>
+      <h2 class="section-title">Find your score in 3 minutes</h2>
+      <div class="q-card" style="text-align:center;padding:3rem 2rem;">
+        <div style="font-size:48px;margin-bottom:1rem;">📊</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:0.75rem;">10 questions across 5 dimensions</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.7;max-width:420px;margin:0 auto 2rem;">
+          Pipeline reliability · Data freshness · Incident response · Business context · AI readiness
+        </div>
+        <button class="btn-next" onclick="startQ()" style="max-width:320px;margin:0 auto;">
+          Start the assessment
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- QUESTION STATE -->
+    <div id="state-q" class="hidden">
+      <div class="prog-wrap">
+        <div class="prog-meta">
+          <span class="prog-dim" id="prog-dim"></span>
+          <span class="prog-count"><span id="q-num">1</span>&nbsp;/&nbsp;10</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+      </div>
+      <div class="q-card" id="q-card">
+        <div class="q-text" id="q-text"></div>
+        <a id="q-link" class="q-readmore hidden" target="_blank" rel="noopener">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6h10M7 2l4 4-4 4"/></svg>
+          <span id="q-link-label"></span>
+        </a>
+        <div class="opts" id="opts"></div>
+      </div>
+      <button class="btn-next" id="btn-next" disabled onclick="nextQ()">
+        Continue
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </button>
+    </div>
+
+    <!-- GATE STATE -->
+    <div id="state-gate" class="hidden">
+      <div class="gate-card">
+        <div class="gate-score-preview"></div>
+        <div class="gate-h">Your score is ready.</div>
+        <div class="gate-sub">Enter your details to unlock your AI Data Readiness profile and personalised recommendations.</div>
+        <div class="gate-fields">
+          <input type="text" id="g-name" placeholder="First name" autocomplete="given-name"/>
+          <input type="email" id="g-email" placeholder="Work email" autocomplete="email"/>
+          <input type="text" id="g-company" placeholder="Company" autocomplete="organization"/>
+        </div>
+        <button class="btn-next" onclick="showResult()" style="max-width:360px;margin:0 auto;">
+          Reveal my score
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+        <div class="gate-legal">Your data is processed in accordance with Sifflet's privacy policy. No spam, ever.</div>
+      </div>
+    </div>
+
+    <!-- RESULT STATE -->
+    <div id="state-result" class="hidden">
+      <div class="section-label">Your results</div>
+      <div class="result-card" id="result-card">
+        <div class="result-top">
+          <div class="score-ring" id="res-ring"></div>
+          <div>
+            <div class="result-profile-name" id="res-profile"></div>
+            <div class="result-desc" id="res-desc"></div>
+          </div>
+        </div>
+        <div class="reco-grid" id="reco-grid"></div>
+      </div>
+      <div class="cta-final" id="cta-final"></div>
+      <button class="restart-btn" onclick="restart()">Start over</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Sifflet<span>.</span></div>
+  <div class="footer-sub">The control plane for Data and AI · <a href="https://www.siffletdata.com" style="color:inherit;">siffletdata.com</a></div>
+</footer>
+
+<script>
+const Qs=[
+  {dim:"Pipeline reliability",text:"When a data pipeline fails, how long does it typically take your team to find out?",
+   link:"https://www.siffletdata.com/blog/data-reliability",linkLabel:"Read: data reliability guide →",
+   opts:[{t:"We get an automated alert in minutes",s:10},{t:"We notice within a few hours",s:6},{t:"A stakeholder reports it",s:2},{t:"We often find out after the damage is done",s:0}]},
+  {dim:"Pipeline reliability",text:"How many of your critical data pipelines have active monitors watching them right now?",
+   opts:[{t:"All of them — every layer is covered",s:10},{t:"Most, but some blind spots remain",s:6},{t:"A handful of key ones",s:3},{t:"We rely on manual checks",s:0}]},
+  {dim:"Data freshness",text:"Do you have a real-time view of whether your data sources are fresh or delayed?",
+   link:"https://www.siffletdata.com/blog/data-quality-monitoring-is-dead-say-hello-to-full-data-stack-observability",linkLabel:"Read: beyond data quality monitoring →",
+   opts:[{t:"Yes — we track freshness across all sources",s:10},{t:"For some sources, not all",s:5},{t:"We check manually before reports",s:2},{t:"Not really",s:0}]},
+  {dim:"Data freshness",text:"If a data source goes stale, who finds out first?",
+   opts:[{t:"An automated alert fires immediately",s:10},{t:"An engineer during routine checks",s:5},{t:"A business user notices a wrong number",s:2},{t:"A client or a regulator",s:0}]},
+  {dim:"Incident response",text:"When a data incident fires, how long does root-cause analysis typically take?",
+   link:"https://www.siffletdata.com/blog/data-observability-five-years-in-why-the-old-playbook-doesnt-work-anymore",linkLabel:"Read: why the old observability playbook fails →",
+   opts:[{t:"Minutes — we have end-to-end lineage",s:10},{t:"An hour or two with the right tooling",s:6},{t:"Half a day of detective work",s:2},{t:"Days — we dig through logs manually",s:0}]},
+  {dim:"Incident response",text:"Can you trace a data anomaly from a downstream report back to its source table in under 10 minutes?",
+   opts:[{t:"Yes, consistently",s:10},{t:"Sometimes, if we're lucky with logs",s:5},{t:"Rarely — it takes significant digging",s:2},{t:"No",s:0}]},
+  {dim:"Business context",text:"When a data alert fires, does it include the downstream business impact?",
+   link:"https://www.siffletdata.com/blog/the-critical-role-of-data-observability-in-treating-data-as-a-product",linkLabel:"Read: data as a product →",
+   opts:[{t:"Yes — alerts include business context and severity",s:10},{t:"Partially — we infer impact manually",s:5},{t:"No — alerts are purely technical",s:2},{t:"We have too many alerts to make sense of them",s:0}]},
+  {dim:"Business context",text:"How confident are your business stakeholders in the data they use to make decisions?",
+   opts:[{t:"Very confident — they trust it fully",s:10},{t:"Mostly confident with occasional doubts",s:6},{t:"They regularly question the numbers",s:2},{t:"Trust is a known problem in our organisation",s:0}]},
+  {dim:"AI readiness",text:"Are the datasets feeding your AI models or automated decisions monitored for quality and drift?",
+   link:"https://www.siffletdata.com/blog/sifflet-review",linkLabel:"Read: AI-native observability →",
+   opts:[{t:"Yes — we monitor training and scoring data continuously",s:10},{t:"We check manually before major runs",s:5},{t:"Not yet — it's on the roadmap",s:2},{t:"Our models run on unmonitored data",s:0}]},
+  {dim:"AI readiness",text:"If an AI model started producing wrong outputs because of an upstream data issue, how fast would you catch it?",
+   opts:[{t:"Within minutes — we have automated checks",s:10},{t:"Within hours — someone would notice",s:5},{t:"Within days — once downstream impact surfaces",s:2},{t:"We wouldn't know until serious damage was done",s:0}]}
+];
+
+const profiles={
+  low:{
+    name:"The blind scaler",
+    desc:"You are investing in AI on top of data you cannot fully see. Every model you deploy inherits the errors your pipelines haven't caught yet. The risk isn't theoretical — it is already in production.",
+    color:"#E24B4A",
+    recos:[
+      {icon:"⚠️",h:"Establish baseline monitoring",p:"Start by covering your most critical pipelines with automated freshness and completeness checks.",link:"https://www.siffletdata.com/blog/getting-started-with-data-observability",lt:"Getting started with observability →"},
+      {icon:"🔗",h:"Build lineage before you scale",p:"Without end-to-end lineage, root cause analysis will always take days — not minutes.",link:"https://www.siffletdata.com/blog/data-quality-monitoring-is-dead-say-hello-to-full-data-stack-observability",lt:"Full stack observability →"},
+      {icon:"🏢",h:"Connect data to business outcomes",p:"Technical alerts without business context create noise. Map your pipelines to outcomes first.",link:"https://www.siffletdata.com/blog/the-critical-role-of-data-observability-in-treating-data-as-a-product",lt:"Data as a product →"},
+      {icon:"🤖",h:"Audit your AI inputs now",p:"Before scaling any model, validate that the data feeding it is monitored and trusted.",link:"https://www.siffletdata.com/blog/sifflet-review",lt:"AI-native observability →"}
+    ],
+    ctaH:"See what your stack is missing — in 20 minutes",
+    ctaSub:"Book a focused data readiness review with our team.",
+    ctaLabel:"Book a 20-min review",
+    ctaHref:"https://www.siffletdata.com/"
+  },
+  mid:{
+    name:"The reactive team",
+    desc:"You catch most issues — after they've already caused damage. Your AI investments are exposed every time a pipeline breaks undetected. The foundation is there. The gaps are costing you.",
+    color:"#BA7517",
+    recos:[
+      {icon:"⚡",h:"Cut your mean time to resolution",p:"Teams using Sifflet reduce MTTR from hours to minutes with automated lineage and context-rich alerts.",link:"https://www.siffletdata.com/blog/data-observability-five-years-in-why-the-old-playbook-doesnt-work-anymore",lt:"Why the old playbook fails →"},
+      {icon:"🎯",h:"Add business context to alerts",p:"Technical alerts without severity scoring create fatigue. Context is what makes monitoring actionable.",link:"https://www.siffletdata.com/blog/data-reliability",lt:"Data reliability guide →"},
+      {icon:"🔍",h:"Close your blind spots",p:"Identify which parts of your stack have no active monitors and prioritise coverage there first.",link:"https://www.siffletdata.com/blog/the-critical-role-of-data-observability-in-treating-data-as-a-product",lt:"Data as a product →"},
+      {icon:"🧠",h:"Extend coverage to AI workloads",p:"Your pipelines may be monitored. But are the datasets feeding your models?",link:"https://www.siffletdata.com/blog/sifflet-review",lt:"AI-native observability →"}
+    ],
+    ctaH:"See how teams like yours cut MTTR from days to minutes",
+    ctaSub:"A 30-minute live demo tailored to your stack.",
+    ctaLabel:"See a live demo",
+    ctaHref:"https://www.siffletdata.com/"
+  },
+  high:{
+    name:"The trusted stack",
+    desc:"Your data foundation is stronger than most. The question now is whether that trust extends to every AI workload you're about to scale — and whether it holds as your stack grows.",
+    color:"#1D9E75",
+    recos:[
+      {icon:"📈",h:"Scale trust, not just coverage",p:"As data volume grows, manual oversight breaks down. See how Sifflet automates trust at scale.",link:"https://www.siffletdata.com/blog/data-observability-five-years-in-why-the-old-playbook-doesnt-work-anymore",lt:"Observability at scale →"},
+      {icon:"🤖",h:"Extend to AI agent pipelines",p:"Agentic AI introduces new failure modes. Your current observability may not cover them.",link:"https://www.siffletdata.com/blog/sifflet-review",lt:"AI-native observability →"},
+      {icon:"👥",h:"Democratise trust across teams",p:"The best data teams give business users visibility — not just engineers.",link:"https://www.siffletdata.com/blog/the-critical-role-of-data-observability-in-treating-data-as-a-product",lt:"Data as a product →"},
+      {icon:"🏆",h:"See what the next level looks like",p:"Benchmark your stack against the observability maturity model and identify your next unlock.",link:"https://www.siffletdata.com/blog/data-reliability",lt:"Data reliability benchmark →"}
+    ],
+    ctaH:"See what full AI data observability looks like",
+    ctaSub:"A product tour built around your use case.",
+    ctaLabel:"Get a product tour",
+    ctaHref:"https://www.siffletdata.com/"
+  }
+};
+
+let cur=0,scores=[],selScore=null;
+
+function show(id){
+  ['state-intro','state-q','state-gate','state-result'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden',s!==id);
+  });
+}
+
+function startQ(){show('state-q');renderQ();}
+
+function renderQ(){
+  const q=Qs[cur];
+  selScore=null;
+  document.getElementById('prog-dim').textContent=q.dim;
+  document.getElementById('q-num').textContent=cur+1;
+  document.getElementById('prog-fill').style.width=((cur+1)/10*100)+'%';
+  document.getElementById('q-text').textContent=q.text;
+
+  const lnk=document.getElementById('q-link');
+  if(q.link){
+    lnk.href=q.link;
+    document.getElementById('q-link-label').textContent=q.linkLabel;
+    lnk.classList.remove('hidden');
+  } else {lnk.classList.add('hidden');}
+
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML='';
+  q.opts.forEach(o=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.innerHTML=`<div class="opt-radio"><div class="opt-dot"></div></div><div class="opt-text">${o.t}</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+      d.classList.add('sel');
+      selScore=o.s;
+      document.getElementById('btn-next').disabled=false;
+    };
+    optsEl.appendChild(d);
+  });
+  document.getElementById('btn-next').disabled=true;
+
+  const card=document.getElementById('q-card');
+  card.style.animation='none';void card.offsetWidth;card.style.animation='fadeUp 0.35s ease both';
+}
+
+function nextQ(){
+  if(selScore===null)return;
+  scores.push(selScore);
+  cur++;
+  if(cur<10){renderQ();}
+  else{show('state-gate');}
+}
+
+function submitToHubSpot(name,email,company,score,profile){
+  const portalId='24383351';
+  const formGuid='YOUR_FORM_GUID'; // replace with actual HubSpot form GUID
+  const data={
+    fields:[
+      {name:'firstname',value:name},
+      {name:'email',value:email},
+      {name:'company',value:company},
+      {name:'ai_readiness_score',value:String(score)},
+      {name:'ai_readiness_profile',value:profile}
+    ],
+    context:{pageUri:window.location.href,pageName:'AI Data Readiness Scorecard'}
+  };
+  fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  }).catch(()=>{});
+}
+
+function showResult(){
+  const name=document.getElementById('g-name').value.trim()||'there';
+  const email=document.getElementById('g-email').value.trim();
+  const company=document.getElementById('g-company').value.trim();
+
+  const total=scores.reduce((a,b)=>a+b,0);
+  const pct=Math.round(total/100*100);
+  const tier=pct<=40?'low':pct<=70?'mid':'high';
+  const p=profiles[tier];
+
+  submitToHubSpot(name,email,company,pct,p.name);
+
+  document.getElementById('res-ring').textContent=pct;
+  document.getElementById('res-ring').style.background=p.color;
+  document.getElementById('res-profile').textContent=p.name;
+  document.getElementById('res-desc').textContent=p.desc;
+
+  document.getElementById('reco-grid').innerHTML=p.recos.map(r=>`
+    <div class="reco-cell">
+      <div class="reco-icon">${r.icon}</div>
+      <div class="reco-h">${r.h}</div>
+      <div class="reco-p">${r.p}</div>
+      <a href="${r.link}" target="_blank" rel="noopener" class="reco-a">${r.lt}</a>
+    </div>
+  `).join('');
+
+  document.getElementById('cta-final').innerHTML=`
+    <div class="cta-final-h">${p.ctaH}</div>
+    <div class="cta-final-sub">${p.ctaSub}</div>
+    <a href="${p.ctaHref}" target="_blank" rel="noopener" class="btn-book">
+      ${p.ctaLabel}
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+  `;
+
+  show('state-result');
+  document.getElementById('assessment').scrollIntoView({behavior:'smooth'});
+}
+
+function restart(){
+  cur=0;scores=[];selScore=null;
+  show('state-intro');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
