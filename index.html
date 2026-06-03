@@ -829,9 +829,9 @@ function nextQ(){
   else{show('state-gate');}
 }
 
-function submitToHubSpot(name,email,company,score,profile){
+function submitToHubSpot(firstname,lastname,email,company,score,profile){
   const portalId='24383351';
-  const formGuid='a88cbe33-ba86-46b2-80ce-5264fb0a0dd6'; // replace with actual HubSpot form GUID
+  const formGuid='YOUR_FORM_GUID'; // replace with actual HubSpot form GUID
   const data={
     fields:[
       {name:'firstname',value:firstname},
@@ -862,7 +862,7 @@ function showResult(){
   const tier=pct<=40?'low':pct<=70?'mid':'high';
   const p=profiles[tier];
 
-  submitToHubSpot(name,email,company,pct,p.name);
+  submitToHubSpot(firstname,lastname,email,company,pct,p.name);
 
   document.getElementById('res-ring').textContent=pct;
   document.getElementById('res-ring').style.background=p.color;
